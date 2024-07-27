@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState,useContext } from "react";
 import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import "react-pro-sidebar/dist/css/styles.css";
 import { tokens } from "../../theme";
 import AddBoxIcon from '@mui/icons-material/AddBox';
@@ -26,10 +26,12 @@ import PieChartOutlineOutlinedIcon from "@mui/icons-material/PieChartOutlineOutl
 import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
-
+import { userContext } from "../../userContext/UserContext";
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const { user} = useContext(userContext);
+  console.log(user);
   return (
     <MenuItem
       active={selected === title}
@@ -102,13 +104,15 @@ const Sidebar = () => {
           {!isCollapsed && (
             <Box mb="25px">
               <Box display="flex" justifyContent="center" alignItems="center">
+                <NavLink to="/profile">
                 <img
                   alt="profile-user"
                   width="100px"
                   height="100px"
                   src={`https://t4.ftcdn.net/jpg/04/98/72/43/360_F_498724323_FonAy8LYYfD1BUC0bcK56aoYwuLHJ2Ge.jpg`}
                   style={{ cursor: "pointer", borderRadius: "50%" }}
-                />
+                  />
+                  </NavLink>
               </Box>
               <Box textAlign="center">
                
