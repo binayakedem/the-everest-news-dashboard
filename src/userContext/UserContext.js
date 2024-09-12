@@ -5,7 +5,7 @@ export const userContext=createContext({})
 export function UserContextProvider({children}){
     const[user, setUser]=useState(null)
     const[email, setEmail]=useState(null)
-    const[orderLimit, setOrderLimit]=useState(0)
+    const[authenticated,setAuthenticated ]=useState(false)
 
    const getUserInfo=async ()=>{
         try {
@@ -17,6 +17,7 @@ export function UserContextProvider({children}){
           });
           setEmail(response.data.email)
           setUser(response.data)
+          setAuthenticated(true);
         } catch (error) {
           console.error(error); 
         }
@@ -24,9 +25,9 @@ export function UserContextProvider({children}){
       }
       useEffect(() => {
         getUserInfo();
-      }, [1000]);
+      }, [user]);
     return(
-        <userContext.Provider value={{user,setUser,email,orderLimit,setOrderLimit}}>
+        <userContext.Provider value={{user,setUser,email,authenticated,getUserInfo}}>
             {children}
         </userContext.Provider>
     )

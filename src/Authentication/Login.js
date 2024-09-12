@@ -1,14 +1,11 @@
 import React, { useState } from 'react'
 import toast from 'react-hot-toast'
-import { useNavigate ,NavLink} from 'react-router-dom'
+import { NavLink} from 'react-router-dom'
 import axios from 'axios'
 const Login = () => {
-    const navigate=useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const[toggle,setToggle]=useState(false)
     const[hidePass,setHidePass]=useState(false)
-  
     const handleSubmit = async (event) => {
       event.preventDefault(); 
   
@@ -22,7 +19,9 @@ const Login = () => {
           localStorage.setItem('authToken', response.data.token);
           localStorage.setItem('email',response.data.useremail)
           toast.success(response.data.message)
-          window.location.href = '/';
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 5000);
         } else {
           toast.error(response.data.error);
           console.log('not valid')

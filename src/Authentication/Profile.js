@@ -9,6 +9,7 @@ const Profile = () => {
   const navigate=useNavigate();
   const { user} = useContext(userContext);
   const [greeting, setGreeting] = useState('');
+  console.log("I am from the profile",user)
   useEffect(() => {
     const updateTime = () => {
       const date = new Date();
@@ -22,7 +23,7 @@ const Profile = () => {
     try {
       const token = localStorage.getItem('authToken'); 
 
-      const response = await axios.post('http://localhost:5000/logout', {}, {
+      const response = await axios.post('http://localhost:5019/logout', {}, {
         headers: {
           Authorization: `Bearer ${token}`
         }})

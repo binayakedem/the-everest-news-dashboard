@@ -1,64 +1,67 @@
-import React, { useState ,useContext, useEffect} from "react";
-import { userContext } from "./userContext/UserContext";
-import { Routes, Route } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import { ColorModeContext, useMode } from "./theme";
 import { CssBaseline, ThemeProvider } from "@mui/material";
-import Topbar from "./scenes/global/topbar";
-import Sidebar from "./scenes/global/sidebar";
-import Dashboard from "./scenes/dashboard";
-import Tags from "./scenes/TagsAndCategory/Tags";
-import Photo from "./scenes/PhotoAndVideo/Photo";
-import PhotoList from "./scenes/PhotoAndVideo/PhotoList";
-import Video from "./scenes/PhotoAndVideo/Video";
-import Category from "./scenes/TagsAndCategory/Category";
-import Project from "./scenes/Project/Project";
-import { UserContextProvider } from "./userContext/UserContext";
-import Register from "./Authentication/Register";
+import FDashboard from "./pages/FDashboard";
+import axios from "axios";
 import Login from "./Authentication/Login";
-import Profile from "./Authentication/Profile";
-import PrivateRoute from "./PrivateRoute/PrivateRoute";
+import Register from "./Authentication/Register";
 function App() {
   const [theme, colorMode] = useMode();
-  const{user}=useContext(userContext)
-  const[isAuthenticated,setIsAuthenticated]=useState(false)
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  const [authenticated, setAuthenticated] = useState(false);
+  const navigate = useNavigate();
 
+  useEffect(() => {
+    const getUserInfo = async () => {
+      try {
+        const token = localStorage.getItem('authToken');
+        if (token) {
+          const response = await axios.get('http://localhost:5019/user', {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
+          setUser(response.data);
+          setAuthenticated(true);
+        }
+      } catch (error) {
+        console.error("Failed to fetch user info:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getUserInfo();
+
+    // Set a timeout to navigate to the login page after 5 seconds if not authenticated
+    const timeout = setTimeout(() => {
+      if (!authenticated) {
+        navigate('/login');
+      }
+    }, 5000);
+
+    return () => clearTimeout(timeout); // Clear timeout if component unmounts
+  }, [authenticated, navigate]);
+ console.log(user)
   return (
     <ColorModeContext.Provider value={colorMode}>
-      <UserContextProvider>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <div className="app">
-          <Sidebar/>
-          <main className="content">
-            <Topbar/>
-            <Routes>
-
-            <Route 
-          path="/" 
-          element={
-            <PrivateRoute isAuthenticated={isAuthenticated}>
-              <Dashboard />
-            </PrivateRoute>
-          } 
-        />
-                <Route path="/tags" element={<Tags />} />
-                <Route path="/add/photo" element={<Photo />} />
-                <Route path="/update/photo" element={<PhotoList />} />
-                <Route path="/category" element={<Category />} />
-                <Route path="/add/project" element={<Project />} />
-                <Route path="/register" element={<Register/>}/>
-                <Route path="login" element={<Login/>}/>
-                <Route path="profile" element={<Profile/>}/>
-
-
-                
-
-                {/* add more routes here */}
-            </Routes>
-          </main>
-        </div>
+        {loading ? (
+          <div>Loading...</div> // Show a loading message or spinner
+        ) : (
+          <Routes>
+            {authenticated ? (
+              <Route path="/" element={<FDashboard />} />
+            ) : (
+              <Route path="/login" element={<Login />} />
+            )}
+            <Route path="/register" element={<Register />} />
+          </Routes>
+        )}
       </ThemeProvider>
-      </UserContextProvider>
     </ColorModeContext.Provider>
   );
 }

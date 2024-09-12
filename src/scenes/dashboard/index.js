@@ -37,8 +37,6 @@ const Dashboard = () => {
       {/* HEADER */}
       <Box display="flex" justifyContent="space-between" alignItems="center">
         <Header wish={greeting} icon={icon} gender="Mr" name="Janak" />
-        
-
         <Box>
           <Button
             sx={{
